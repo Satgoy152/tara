@@ -6,6 +6,27 @@
 
 LM Mentor is an app designed to assist students at the University of Michigan in planning and navigating their academic journeys. Leveraging advanced technologies such as a Large Language Model (LLM) backbone, Retrieval-Augmented Generation (RAG), and University of Michigan APIs, LM Mentor provides personalized and real-time guidance tailored to each student’s unique career and academic goals. The app serves as a complementary tool to existing counseling services, offering on-demand support with domain expertise and cross-departmental insights.
 
+**Usage**:
+
+Create and activate conda environment:
+
+```
+conda create -n "myenv" python=3.9.19 ipython
+conda activate myenv
+```
+
+Download required dependencies
+
+```
+pip install -r requirements.txt
+```
+
+Start streamlit
+
+```
+streamlit run dashboard.py  --server.enableXsrfProtection false
+```
+
 **Purpose**
 
 The primary objective of LM Mentor is to bridge the gap between students’ personal career aspirations and their academic goals. Traditional counseling services often face limitations, such as time constraints, lack of specific domain knowledge, and insufficient cross-departmental information. LM Mentor addresses these challenges by providing continuous, personalized guidance, ensuring that students are well-informed about relevant courses, clubs, and opportunities that align with their interests and career objectives.
