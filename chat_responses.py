@@ -7,16 +7,13 @@ from langchain_community.chat_message_histories import ChatMessageHistory
 from langchain_core.chat_history import BaseChatMessageHistory
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables.history import RunnableWithMessageHistory
-from langchain_chroma import Chroma
-from langchain_voyageai import VoyageAIEmbeddings
 import dotenv
-import chromadb
-from langsmith import traceable
-from chromadb.config import DEFAULT_TENANT, DEFAULT_DATABASE, Settings
 from langchain.chains import create_history_aware_retriever
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import os
 from langsmith import Client 
+from retrieval import Retriever
+
 
 
 
@@ -35,19 +32,15 @@ class LMMentorBot:
 
         client = Client()
         print("Initializing RAG system")
-        new_client = chromadb.PersistentClient(path = "./chroma_db", tenant = DEFAULT_TENANT, database = DEFAULT_DATABASE, settings = Settings())
-
-        embeddings = VoyageAIEmbeddings(
-            voyage_api_key=dotenv.get_key(dotenv_path= ".env", key_to_get = "VOYAGEAI_KEY") , model="voyage-large-2-instruct")
-
-        saved_data_store = Chroma(persist_directory="./chroma_db", collection_name="umich_fa2024", embedding_function=embeddings, client=new_client)
-        rag_retriver = saved_data_store.as_retriever(search_type="similarity", search_kwargs={"k": 5})
+        retriever = Retriever()
+        rag_retriver = retriever.retriver_sim
+        dummy_retriever = retriever.retriever_dummy
 
         print("Initializing LLM")
         llm = ChatOpenAI(temperature=0.7, model= "gpt-4o-mini-2024-07-18", api_key=dotenv.get_key(dotenv_path= ".env", key_to_get = "OPENAI_KEY"))
 
         contextualize_q_system_prompt = """Given a chat history and the latest user question \
-        which might reference context in the chat history, formulate a standalone question \
+        which might reference context in the chat history, formulate a brief standalone question \
         which can be understood without the chat history. Do NOT answer the question, \
         just reformulate it if needed and otherwise return it as is."""
 
@@ -62,13 +55,17 @@ class LMMentorBot:
             llm, rag_retriver, contextualize_q_prompt
         )
 
-        qa_system_prompt = """Role and Purpose:
+        audit_retrevier = create_history_aware_retriever(
+            llm, dummy_retriever, contextualize_q_prompt
+        )
+
+        qa_system_prompt = """
+        Role and Purpose:
         You are LM Mentor, a knowledgeable and empathetic mentor, counselor, and companion designed to assist University of Michigan students in planning their academic journeys. Your goal is to provide personalized, real-time guidance, helping students align their academic pursuits with their career goals. You offer support in areas such as course selection, club activities, and career planning.
 
         Instructions for Interaction:
-
             •	Greet and Engage: Start by greeting the student warmly and asking how you can assist them today.
-            •	Gather Detailed Information: Ask a series of detailed questions to understand the student’s academic goals, interests, current courses, extracurricular activities, and any specific challenges they are facing.
+            •	Gather Detailed Information: Ask a series of questions to understand the student’s academic goals, interests, current courses, extracurricular activities, and any specific challenges they are facing.
             •	Utilize Chat History and RAG Data: Leverage the chat history and retrieval-augmented generation (RAG) data to provide contextually relevant and up-to-date information in your responses.
             •	Structured Information Display: Present the gathered information and your recommendations in a structured format, such as a chart or table.
             •	Provide Personalized Guidance: Use the student’s responses and the RAG data to offer tailored advice on courses, extracurricular activities, and career paths.
@@ -79,7 +76,7 @@ class LMMentorBot:
         Example Interaction:
 
         Greeting:
-        “Hello! I’m LM Mentor, your personal academic guide. How can I assist you today with your academic and career planning?”
+        "Hello! I'm LM Mentor, your academic companion. How can I assist you today? If you can provide me with your Degree Audit Report in Wolverine Access I can provide tailored advice based on your requirements."
 
         Questions to Ask:
 
@@ -91,6 +88,10 @@ class LMMentorBot:
             6.	“Do you have any specific career aspirations or industries you are interested in?”
 
         Incorporating RAG Data:
+        You will be provided with a Degree Audit Report from the student. First summarize the students current status and then provide recommendations/answer questions based on the Degree Audit Report.
+        By default the report begins with general information about credits, GPA, and current standing. Then information different degree requirments, their status, and relevant courses used complete the requirements.
+        Courses completed will have their grade at the end of the name. Otherwise, T, implies transfer credit, and * is ongoign courses. Keep in mind the current term is Fall 2024.
+       
         “Based on the information you’ve provided and the latest data from UMich, here is a summary of your current status and my recommendations:
         “Based on your interest in [field], I recommend considering courses like [Course A] and [Course B]. These will help you build a strong foundation in [subject]. Additionally, joining the [Club Name] can provide you with valuable networking opportunities and practical experience.”
 
@@ -115,7 +116,9 @@ class LMMentorBot:
         )
         question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 
+
         rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
+        audit_text_chain = create_retrieval_chain(audit_retrevier, question_answer_chain)
 
         print("Creating chat history")
         self.store = {}
@@ -135,6 +138,26 @@ class LMMentorBot:
             output_messages_key="answer",
         )
 
+        self.conversational_chain_no_rag = RunnableWithMessageHistory(
+            audit_text_chain,
+            get_session_history,
+            input_messages_key="input",
+            history_messages_key="chat_history",
+            output_messages_key="answer",
+        )
+
+    def upload_degree_audit(self, text: str) -> str:
+        print("Uploading degree audit")
+        response = self.conversational_chain_no_rag.invoke(
+            {"input": text},
+                config={
+                    "configurable": {"session_id": "abc123"}
+                },  # constructs a key "abc123" in `store`.
+            )["answer"]
+        print(response)
+        print(self.store)
+        return response
+
     def chat(self, text: str) -> str:
         print("Chatting with LM Mentor")
         response = self.conversational_rag_chain.invoke(
@@ -143,5 +166,6 @@ class LMMentorBot:
                     "configurable": {"session_id": "abc123"}
                 },  # constructs a key "abc123" in `store`.
             )["answer"]
+        print(response)
         print(self.store)
         return response
