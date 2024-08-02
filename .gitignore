@@ -3,3 +3,4 @@ rag_data/*
 external_data/*
 .env
 __pycache__/*
+testing_scripts/*
