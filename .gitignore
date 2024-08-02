@@ -1,5 +1,5 @@
 lm_nodeenv/
 rag_data/*
 external_data/*
-chroma_db/*
 .env
+__pycache__/*
