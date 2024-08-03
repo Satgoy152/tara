@@ -6,66 +6,59 @@ from audit_parse import extract_text_fromaudit
 st.set_page_config(
     page_title="LM Mentor", 
     page_icon=":student:", 
-    layout="wide")
-
+    layout="centered")
 st.title("University of Michigan LM Mentor")
-st.header("Welcome to LM Mentor, your academic companion!")
 
-# add file drop
-uploaded_file = st.file_uploader("Upload your Degree Audit here:", type=["pdf"], accept_multiple_files=False)
+with st.sidebar:
+    st.header("Welcome to LM Mentor, your academic companion!")
+    st.write("To get started you can either start chatting with Mentra or simply upload your Degree Audit Checklist or Report pdf.")
+    st.info("Wolverine Access > Backpack > My Academics > View My Advisement Report > Checklist Report PDF.")
+    st.button("Hi, what can you do?")
+
 
 # Initialize chat bot
 if "chatBot" not in st.session_state:
     st.session_state.chatBot = LMMentorBot()
 
+
 # Initialize degree audit boolean
 if "degree_audit" not in st.session_state:
     st.session_state.degree_audit = False
-if uploaded_file is None:
-    st.session_state.degree_audit = False
+
 
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
-
-# Display chat messages from history
-for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
-        st.write(message["content"])
+# initialize columns
 
 # Streamed response emulator
 def response_generator(text):
 
     # call chat bot
     response = st.session_state.chatBot.chat(text)
-    print(response)
 
     # if line break in response go to next line
     for word in response.split(" "):
-        yield word + " "
-        time.sleep(0.06)
+        if word == "":
+            yield word + " "
+        else:
+            yield word + " "
+            time.sleep(0.06)
 
 def audit_response_generator(text):
 
     # call chat bot
     response = st.session_state.chatBot.upload_degree_audit(text)
-    print(response)
 
     # if line break in response go to next line
     for word in response.split(" "):
-        yield word + " "
-        time.sleep(0.06)
+        if word == "":
+            yield word + " "
+        else:
+            yield word + " "
+            time.sleep(0.06)
 
-if uploaded_file is not None and st.session_state.degree_audit == False:
-    audit_text = extract_text_fromaudit(uploaded_file)
-    with st.chat_message("assistant"):
-        response = st.write_stream(audit_response_generator(audit_text))
-    st.session_state.messages.append({"role": "assistant", "content": response})
-    st.session_state.degree_audit = True
-
-# Get user input
-if prompt := st.chat_input("How is my degree progress?"):
-    # Display user message
+def send_user_input(prompt:str):
     with st.chat_message("user"):
         st.markdown(prompt)
     
@@ -74,11 +67,43 @@ if prompt := st.chat_input("How is my degree progress?"):
 
     # call response generator
     with st.chat_message("assistant"):
-        response = st.write_stream(response_generator(prompt))
+        with st.spinner("Thinking..."):
+            response = st.write_stream(response_generator(prompt))
 
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-# Display assistant response in chat message container
-# with st.chat_message("assistant"):
-#     response = st.write_stream(response_generator(prompt))
-# Add assistant response to chat history
+uploaded_file = st.file_uploader("Upload your Degree Audit here:", type=["pdf"], accept_multiple_files=False)
+# add file drop
+if uploaded_file is None:
+    st.session_state.degree_audit = False
+
+# Display chat messages from history
+for message in st.session_state.messages:
+    with st.chat_message(message["role"]):
+        st.write(message["content"])
+
+if uploaded_file is not None and st.session_state.degree_audit == False:
+    audit_text = extract_text_fromaudit(uploaded_file)
+    if audit_text == "":
+        st.error("Error extracting text from PDF. Please try again.")
+        st.stop()
+    if audit_text == "Invalid PDF":
+        st.error("This doesn't look like a degree audit. Please try again.")
+        st.stop()
+    with st.chat_message("assistant"):
+        response = st.write_stream(audit_response_generator(audit_text))
+    st.session_state.messages.append({"role": "assistant", "content": response})
+    st.session_state.degree_audit = True
+
+
+# Get user input
+if prompt := st.chat_input("How is my degree progress?"):
+    # Display user message
+    send_user_input(prompt)
+
+    # Display assistant response in chat message container
+    # with st.chat_message("assistant"):
+    #     response = st.write_stream(response_generator(prompt))
+    # Add assistant response to chat history
+
+
