@@ -31,14 +31,18 @@ class LMMentorBot:
         os.environ["LANGCHAIN_API_KEY"] = dotenv.get_key(dotenv_path= ".env", key_to_get = "LANGCHAIN_API_KEY")
 
         client = Client()
+
         print("Initializing RAG system")
         retriever = Retriever()
+
+        # create retrievers for audit(dummy) and chat(rag)
         rag_retriver = retriever.retriver_sim
         dummy_retriever = retriever.retriever_dummy
 
         print("Initializing LLM")
         llm = ChatOpenAI(temperature=0.7, model= "gpt-4o-mini-2024-07-18", api_key=dotenv.get_key(dotenv_path= ".env", key_to_get = "OPENAI_KEY"))
 
+        # 
         contextualize_q_system_prompt = """Given a chat history and the latest user question \
         which might reference context in the chat history, formulate a brief standalone question \
         which can be understood without the chat history. Do NOT answer the question, \
@@ -114,9 +118,10 @@ class LMMentorBot:
                 ("human", "{input}"),
             ]
         )
+        #create chain to insert documents for context (rag documents)
         question_answer_chain = create_stuff_documents_chain(llm, qa_prompt)
 
-
+        # chain that retrieves documents and then passes them to the question_answer_chain
         rag_chain = create_retrieval_chain(history_aware_retriever, question_answer_chain)
         audit_text_chain = create_retrieval_chain(audit_retrevier, question_answer_chain)
 
@@ -154,7 +159,6 @@ class LMMentorBot:
                     "configurable": {"session_id": "abc123"}
                 },  # constructs a key "abc123" in `store`.
             )["answer"]
-        print(response)
         print(self.store)
         return response
 
@@ -166,6 +170,5 @@ class LMMentorBot:
                     "configurable": {"session_id": "abc123"}
                 },  # constructs a key "abc123" in `store`.
             )["answer"]
-        print(response)
         print(self.store)
         return response
