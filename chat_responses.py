@@ -24,7 +24,7 @@ class LMMentorBot:
 
     def __init__(self):
 
-        print("Starting LM Mentor Bot -----------------------------------###")
+        print("Starting Tara Assisstant -----------------------------------###")
 
         os.environ["LANGCHAIN_TRACING_V2"] = "true"
         os.environ["LANGCHAIN_ENDPOINT"] = "https://api.smith.langchain.com"
@@ -40,13 +40,27 @@ class LMMentorBot:
         dummy_retriever = retriever.retriever_dummy
 
         print("Initializing LLM")
-        llm = ChatOpenAI(temperature=0.7, model= "gpt-4o-mini-2024-07-18", api_key=dotenv.get_key(dotenv_path= ".env", key_to_get = "OPENAI_KEY"))
+        llm = ChatOpenAI(temperature=0.7, model= "gpt-4o-mini-2024-07-18", api_key=dotenv.get_key(dotenv_path= ".env", key_to_get = "OPENAI_KEY"), max_tokens=70000)
+        dummy_llm = ChatOpenAI(temperature=0.7, model= "gpt-4o-mini-2024-07-18", api_key=dotenv.get_key(dotenv_path= ".env", key_to_get = "OPENAI_KEY"), max_tokens=1)
 
         # 
-        contextualize_q_system_prompt = """Given a chat history and the latest user question \
-        which might reference context in the chat history, formulate a brief standalone question \
-        which can be understood without the chat history. Do NOT answer the question, \
-        just reformulate it if needed and otherwise return it as is."""
+        contextualize_q_system_prompt = """Role and Purpose:
+        You are an AI assistant part of an app to help university students plan their academic journeys. Given a conversation with a chatbot, the user, and the latest user message, generate a precise and relevant query (just provide the query and nothing else). 
+        The query you provide will be turned in an embedding and then be used to query a vector database with data on Univesity class schedules and descriptions. Your goal is to understand the context, identify key elements, and formulate a focused query that maximizes the relevance and utility of the retrieved data.
+        Instructions:
+
+            1.	Review Chat History: Consider the entire conversation history, including previous tasks, user questions, and responses.
+            2.	Analyze Latest Message: Focus on the user’s most recent message, identifying key topics, questions, or requests.
+            3.	Determine Relevance: Assess the relevance of the current discussion to previous interactions and ongoing tasks.
+            4.	Formulate Query: Create a concise and specific query that captures the essence of the user’s request and relevant context. Ensure the query is structured to retrieve the most relevant data from the embeddings and VectorDB.
+
+        Example:
+        Chat History Context:
+        The user has been discussing academic planning, including course selection, scheduling, and degree requirements. They have also asked about balancing STEM and non-STEM classes.
+        Latest User Message:
+        The user inquired about finding courses that satisfy both the Quantitative Reasoning and Humanities requirements.
+        Relevant Query:
+        “Give courses that fulfill both Quantitative Reasoning (QR) and Humanities (HU) requirements, with emphasis on balancing STEM and non-STEM classes.”"""
 
         contextualize_q_prompt = ChatPromptTemplate.from_messages(
             [
@@ -60,12 +74,13 @@ class LMMentorBot:
         )
 
         audit_retrevier = create_history_aware_retriever(
-            llm, dummy_retriever, contextualize_q_prompt
+            dummy_llm, dummy_retriever, contextualize_q_prompt
         )
 
         qa_system_prompt = """
         Role and Purpose:
-        You are LM Mentor, a knowledgeable and empathetic mentor, counselor, and companion designed to assist University of Michigan students in planning their academic journeys. Your goal is to provide personalized, real-time guidance, helping students align their academic pursuits with their career goals. You offer support in areas such as course selection, club activities, and career planning.
+        You are a Tailored Academic & Resource Assistant, or Tara for short, a knowledgeable and empathetic mentor, counselor, and companion designed to assist University of Michigan students in planning their academic journeys. 
+        Your goal is to provide personalized, real-time guidance, helping students align their academic pursuits with their career goals. You offer support in areas such as course selection, club activities, and career planning.
 
         Instructions for Interaction:
             •	Greet and Engage: Start by greeting the student warmly and asking how you can assist them today.
@@ -80,7 +95,7 @@ class LMMentorBot:
         Example Interaction:
 
         Greeting:
-        "Hello! I'm LM Mentor, your academic companion. How can I assist you today? If you can provide me with your Degree Audit Report in Wolverine Access I can provide tailored advice based on your requirements."
+        "Hello! I'm Tara, your academic companion. How can I assist you today? If you can provide me with your Degree Audit Report in Wolverine Access I can provide tailored advice based on your requirements."
 
         Questions to Ask:
 
@@ -94,7 +109,7 @@ class LMMentorBot:
         Incorporating RAG Data:
         You will be provided with a Degree Audit Report from the student. First summarize the students current status and then provide recommendations/answer questions based on the Degree Audit Report.
         By default the report begins with general information about credits, GPA, and current standing. Then information different degree requirments, their status, and relevant courses used complete the requirements.
-        Courses completed will have their grade at the end of the name. Otherwise, T, implies transfer credit, and * is ongoign courses. Keep in mind the current term is Fall 2024.
+        Courses completed will have their grade at the end of the name. Otherwise, T, implies transfer credit, and * is ongoign courses. Keep in mind the current term is Fall 2024 (runs from Aug 25th to December 15th).
        
         “Based on the information you’ve provided and the latest data from UMich, here is a summary of your current status and my recommendations:
         “Based on your interest in [field], I recommend considering courses like [Course A] and [Course B]. These will help you build a strong foundation in [subject]. Additionally, joining the [Club Name] can provide you with valuable networking opportunities and practical experience.”
@@ -163,7 +178,7 @@ class LMMentorBot:
         return response
 
     def chat(self, text: str) -> str:
-        print("Chatting with LM Mentor")
+        print("Chatting with Tara")
         response = self.conversational_rag_chain.invoke(
             {"input": text},
                 config={
