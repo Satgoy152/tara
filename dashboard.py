@@ -4,14 +4,14 @@ from chat_responses import LMMentorBot
 from audit_parse import extract_text_fromaudit
 
 st.set_page_config(
-    page_title="LM Mentor", 
+    page_title="Tara", 
     page_icon=":student:", 
     layout="centered")
-st.title("University of Michigan LM Mentor")
+st.title("Talk to University of Michigan Tara")
 
 with st.sidebar:
-    st.header("Welcome to LM Mentor, your academic companion!")
-    st.write("To get started you can either start chatting with Mentra or simply upload your Degree Audit Checklist or Report pdf.")
+    st.header("Meet Tara or your Tailored Academic & Resource Assistant!")
+    st.write("To get started you can either start chatting with Tara or simply upload your Degree Audit Checklist or Report pdf.")
     st.info("Wolverine Access > Backpack > My Academics > View My Advisement Report > Checklist Report PDF.")
     st.button("Hi, what can you do?")
 
