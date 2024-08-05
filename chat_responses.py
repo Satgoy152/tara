@@ -1,5 +1,4 @@
 from langchain_openai import ChatOpenAI
-import bs4
 from langchain.chains import create_history_aware_retriever, create_retrieval_chain
 from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_chroma import Chroma
@@ -13,7 +12,6 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 import os
 from langsmith import Client 
 from retrieval import Retriever
-from datetime import date
 
 
 

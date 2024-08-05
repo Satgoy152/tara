@@ -155,6 +155,7 @@ pypdf==4.3.1
 pypdfium2==4.30.0
 PyPika==0.48.9
 pyproject_hooks==1.1.0
+pysqlite3-binary
 python-dateutil==2.9.0
 python-dotenv==1.0.1
 python-iso639==2024.4.27
