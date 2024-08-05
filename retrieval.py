@@ -3,6 +3,7 @@ from langchain_voyageai import VoyageAIEmbeddings
 from chromadb.config import DEFAULT_TENANT, DEFAULT_DATABASE, Settings
 import chromadb
 import dotenv
+import streamlit as st
 
 
 # load VoyageAI key
@@ -23,7 +24,7 @@ class Retriever:
         new_client = chromadb.PersistentClient(path = "./chroma_db", tenant = DEFAULT_TENANT, database = DEFAULT_DATABASE, settings = Settings())
 
         embeddings = VoyageAIEmbeddings(
-            voyage_api_key=dotenv.get_key(dotenv_path= ".env", key_to_get = "VOYAGEAI_KEY") , model="voyage-large-2-instruct")
+            voyage_api_key=st.secrets["VOYAGEAI_KEY"] , model="voyage-large-2-instruct")
         
         dummyEmbeddings = MyEmbeddings(model="dummy")
 

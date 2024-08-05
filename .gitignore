@@ -4,3 +4,4 @@ external_data/*
 .env
 __pycache__/*
 testing_scripts/*
+.streamlit/secrets.toml
