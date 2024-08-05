@@ -21,6 +21,13 @@ Download required dependencies
 pip install -r requirements.txt
 ```
 
+API Keys store
+```
+mkdir .streamlit
+touch .streamlit/secrets.toml
+```
+Add API Keys and add to `.gitignore`
+
 Start streamlit
 
 ```
