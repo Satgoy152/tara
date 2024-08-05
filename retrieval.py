@@ -3,9 +3,7 @@ from langchain_voyageai import VoyageAIEmbeddings
 from chromadb.config import DEFAULT_TENANT, DEFAULT_DATABASE, Settings
 import chromadb
 import dotenv
-__import__('pysqlite3')
-import sys
-sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
+
 
 # load VoyageAI key
 dotenv.load_dotenv()
