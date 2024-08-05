@@ -7,14 +7,17 @@ st.set_page_config(
     page_title="Tara", 
     page_icon=":student:", 
     layout="centered")
-st.title("Talk to University of Michigan Tara")
+st.title("Talk to Tara - University of Michigan")
 
 with st.sidebar:
     st.header("Meet Tara or your Tailored Academic & Resource Assistant!")
     st.write("To get started you can either start chatting with Tara or simply upload your Degree Audit Checklist or Report pdf.")
-    st.info("Wolverine Access > Backpack > My Academics > View My Advisement Report > Checklist Report PDF.")
-    st.button("Hi, what can you do?")
-
+    st.info("Download Audit from: Wolverine Access > Backpack > My Academics > View My Advisement Report > Checklist Report PDF.")
+    st.divider()
+    st.write("Tara can help you with:")
+    st.write("- Degree Audit Summary and Breakdown")
+    st.write("- Course Recommendations")
+    st.write("- Resources for Academic Success")
 
 # Initialize chat bot
 if "chatBot" not in st.session_state:
@@ -97,7 +100,7 @@ if uploaded_file is not None and st.session_state.degree_audit == False:
 
 
 # Get user input
-if prompt := st.chat_input("How is my degree progress?"):
+if prompt := st.chat_input("What classes should I want to become...?"):
     # Display user message
     send_user_input(prompt)
 
