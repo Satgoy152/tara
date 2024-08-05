@@ -142,7 +142,6 @@ pip==24.0
 platformdirs==4.2.2
 posthog==3.5.0
 prompt_toolkit==3.0.47
-protobuf==5.27.2
 psutil==5.9.0
 psycopg==3.2.1
 psycopg-pool==3.2.2
