@@ -4,7 +4,7 @@
 
 **Overview**
 
-Tailored Academic and Resource Assistant, or TARA for short, is an app designed to assist students at the University of Michigan in planning and navigating their academic journeys. Leveraging advanced technologies such as a Large Language Model (LLM) backbone, Retrieval-Augmented Generation (RAG), and University of Michigan APIs, LM Mentor provides personalized and real-time guidance tailored to each student’s unique career and academic goals. The app serves as a complementary tool to existing counseling services, offering on-demand support with domain expertise and cross-departmental insights.
+Tailored Academic and Resource Assistant, or TARA for short, is an app designed to assist students at the University of Michigan in planning and navigating their academic journeys. Leveraging advanced technologies such as a Large Language Model (LLM) backbone and Retrieval-Augmented Generation (RAG), Tara provides personalized and real-time guidance tailored to each student’s unique career and academic goals. The app serves as a complementary tool to existing counseling services, offering on-demand support with domain expertise and cross-departmental insights.
 
 **Usage**:
 
