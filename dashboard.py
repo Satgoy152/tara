@@ -2,12 +2,13 @@ import streamlit as st
 import time
 from chat_responses import LMMentorBot
 from audit_parse import extract_text_fromaudit
+from feedback import append_values
 
 st.set_page_config(
     page_title="Tara", 
-    page_icon=":student:", 
+    page_icon=":sparkles:", 
     layout="centered")
-st.title("Talk to Tara - University of Michigan")
+st.title("✨ Talk to Tara - University of Michigan")
 
 with st.sidebar:
     st.header("Meet Tara or your Tailored Academic & Resource Assistant!")
@@ -32,7 +33,6 @@ if "degree_audit" not in st.session_state:
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
-# initialize columns
 
 # Streamed response emulator
 def response_generator(text):
@@ -62,14 +62,14 @@ def audit_response_generator(text):
             time.sleep(0.06)
 
 def send_user_input(prompt:str):
-    with st.chat_message("user"):
+    with st.chat_message("user", avatar="🧑‍🎓"):
         st.markdown(prompt)
     
     # add to chat history
     st.session_state.messages.append({"role": "user", "content": prompt})
 
     # call response generator
-    with st.chat_message("assistant"):
+    with st.chat_message("assistant", avatar="✨"):
         with st.spinner("Thinking..."):
             response = st.write_stream(response_generator(prompt))
 
@@ -82,19 +82,36 @@ if uploaded_file is None:
 
 # Display chat messages from history
 for message in st.session_state.messages:
-    with st.chat_message(message["role"]):
+    avatar = None
+    if message["role"] == "user":
+        avatar = "🧑‍🎓"
+    else:
+        avatar = "✨"
+        
+    with st.chat_message(message["role"], avatar=avatar):
         st.write(message["content"])
 
 if uploaded_file is not None and st.session_state.degree_audit == False:
     audit_text = extract_text_fromaudit(uploaded_file)
+
+    with st.chat_message("user", avatar="🧑‍🎓"):
+        st.markdown("*You uploaded your degree audit*")
+    
     if audit_text == "":
         st.error("Error extracting text from PDF. Please try again.")
         st.stop()
     if audit_text == "Invalid PDF":
         st.error("This doesn't look like a degree audit. Please try again.")
         st.stop()
-    with st.chat_message("assistant"):
-        response = st.write_stream(audit_response_generator(audit_text))
+    
+    with st.chat_message("assistant", avatar="✨"):
+        with st.spinner("Analyzing your Degree Audit..."):
+            response = st.write_stream(audit_response_generator(audit_text))
+    
+    
+    # add to chat history
+    st.session_state.messages.append({"role": "user", "content": "*You uploaded your degree audit*"})
+
     st.session_state.messages.append({"role": "assistant", "content": response})
     st.session_state.degree_audit = True
 
@@ -108,5 +125,12 @@ if prompt := st.chat_input("What classes should I want to become...?"):
     # with st.chat_message("assistant"):
     #     response = st.write_stream(response_generator(prompt))
     # Add assistant response to chat history
-
-
+selected = st.feedback("thumbs")
+if selected is not None:
+    sentiment = None
+    if selected == 0:
+        sentiment = "Negative"
+    else:
+        sentiment = "Positive"
+    append_values("1WAuUGd130tEnsjFzaYy7Tgq5H3zh-vvp7WXlg9WPNAs", "Sheet1!A1:C1", "USER_ENTERED", [["Session id: Test", str(st.session_state.messages), sentiment]])
+    st.success("Thank you for your feedback!")
