@@ -19,6 +19,11 @@ with st.sidebar:
     st.write("- Degree Audit Summary and Breakdown")
     st.write("- Course Recommendations")
     st.write("- Resources for Academic Success")
+    st.divider()
+    with st.expander("Disclaimer", icon ="⚠️"):
+        st.markdown("Tara is a virtual assistant and is **not** a replacement for academic advisors. Please consult with your academic advisor for official advice.")
+        st.write("Tara does not store any personal information, any feedback is anonymous.")
+
 
 # Initialize chat bot
 if "chatBot" not in st.session_state:
@@ -117,7 +122,7 @@ if uploaded_file is not None and st.session_state.degree_audit == False:
 
 
 # Get user input
-if prompt := st.chat_input("What classes should I want to become...?"):
+if prompt := st.chat_input("What classes should I take if I want to become...?"):
     # Display user message
     send_user_input(prompt)
 
