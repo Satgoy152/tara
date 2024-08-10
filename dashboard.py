@@ -3,6 +3,9 @@ import time
 from chat_responses import LMMentorBot
 from audit_parse import extract_text_fromaudit
 from feedback import append_values
+import asyncio
+from typing import AsyncGenerator
+
 
 st.set_page_config(
     page_title="Tara", 
@@ -40,18 +43,6 @@ if "messages" not in st.session_state:
     st.session_state.messages = []
 
 # Streamed response emulator
-def response_generator(text):
-
-    # call chat bot
-    response = st.session_state.chatBot.chat(text)
-
-    # if line break in response go to next line
-    for word in response.split(" "):
-        if word == "":
-            yield word + " "
-        else:
-            yield word + " "
-            time.sleep(0.06)
 
 def audit_response_generator(text):
 
@@ -76,7 +67,7 @@ def send_user_input(prompt:str):
     # call response generator
     with st.chat_message("assistant", avatar="✨"):
         with st.spinner("Thinking..."):
-            response = st.write_stream(response_generator(prompt))
+            response = st.write_stream(st.session_state.chatBot.chat_stream(prompt))
 
     st.session_state.messages.append({"role": "assistant", "content": response})
 
@@ -111,7 +102,7 @@ if uploaded_file is not None and st.session_state.degree_audit == False:
     
     with st.chat_message("assistant", avatar="✨"):
         with st.spinner("Analyzing your Degree Audit..."):
-            response = st.write_stream(audit_response_generator(audit_text))
+            response = st.write_stream(st.session_state.chatBot.upload_degree_audit(audit_text))
     
     
     # add to chat history
@@ -125,6 +116,7 @@ if uploaded_file is not None and st.session_state.degree_audit == False:
 if prompt := st.chat_input("What classes should I take if I want to become...?"):
     # Display user message
     send_user_input(prompt)
+
 
     # Display assistant response in chat message container
     # with st.chat_message("assistant"):
