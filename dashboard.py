@@ -42,20 +42,40 @@ if "degree_audit" not in st.session_state:
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
+uploaded_file = st.file_uploader("Upload your Degree Audit here:", type=["pdf"], accept_multiple_files=False)
+# add file drop
 # Streamed response emulator
+# Display chat messages from history
+for message in st.session_state.messages:
+    avatar = None
+    if message["role"] == "user":
+        avatar = "🧑‍🎓"
+    else:
+        avatar = "✨"
+        
+    with st.chat_message(message["role"], avatar=avatar):
+        st.empty()
+        st.write(message["content"])
+    
+st.button("Hi Tara, what can you do?")
+st.button("What requirements do I have left?")
+st.form()
 
-def audit_response_generator(text):
+if uploaded_file is None:
+    st.session_state.degree_audit = False
 
-    # call chat bot
-    response = st.session_state.chatBot.upload_degree_audit(text)
+# def audit_response_generator(text):
 
-    # if line break in response go to next line
-    for word in response.split(" "):
-        if word == "":
-            yield word + " "
-        else:
-            yield word + " "
-            time.sleep(0.06)
+#     # call chat bot
+#     response = st.session_state.chatBot.upload_degree_audit(text)
+
+#     # if line break in response go to next line
+#     for word in response.split(" "):
+#         if word == "":
+#             yield word + " "
+#         else:
+#             yield word + " "
+#             time.sleep(0.06)
 
 def send_user_input(prompt:str):
     with st.chat_message("user", avatar="🧑‍🎓"):
@@ -71,21 +91,6 @@ def send_user_input(prompt:str):
 
     st.session_state.messages.append({"role": "assistant", "content": response})
 
-uploaded_file = st.file_uploader("Upload your Degree Audit here:", type=["pdf"], accept_multiple_files=False)
-# add file drop
-if uploaded_file is None:
-    st.session_state.degree_audit = False
-
-# Display chat messages from history
-for message in st.session_state.messages:
-    avatar = None
-    if message["role"] == "user":
-        avatar = "🧑‍🎓"
-    else:
-        avatar = "✨"
-        
-    with st.chat_message(message["role"], avatar=avatar):
-        st.write(message["content"])
 
 if uploaded_file is not None and st.session_state.degree_audit == False:
     audit_text = extract_text_fromaudit(uploaded_file)
@@ -95,11 +100,12 @@ if uploaded_file is not None and st.session_state.degree_audit == False:
     
     if audit_text == "":
         st.error("Error extracting text from PDF. Please try again.")
-        st.stop()
+        # st.stop()
     if audit_text == "Invalid PDF":
         st.error("This doesn't look like a degree audit. Please try again.")
-        st.stop()
-    
+        # st.stop()
+
+
     with st.chat_message("assistant", avatar="✨"):
         with st.spinner("Analyzing your Degree Audit..."):
             response = st.write_stream(st.session_state.chatBot.upload_degree_audit(audit_text))
