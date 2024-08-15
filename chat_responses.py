@@ -162,4 +162,5 @@ class LMMentorBot:
             if 'answer' in chunk.keys():
                 yield chunk.get("answer")
             else:
-                print(chunk.keys())
+                continue
+        print(self.store["abc123"])
