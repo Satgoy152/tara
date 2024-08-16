@@ -2,6 +2,21 @@
 
 **Tailored Academic and Resource Assistant Description**
 
+**Updates**
+
+Tara Version Release!
+
+Introducing Tara V1.2: With improved interface experience, better chat response times, and improved student audit checklist parsing. The newest release also provides links to atlas courses and quickstart with predefined prompts.
+
+Backend Updates:
+
+Anthropic chain used for better Audit Summary and Parsing and lower net token usage
+Improved prompting to increase response quality and links for courses
+Better page loading
+Follow updates on Github: https://github.com/Satgoy152/tara
+
+
+
 **Overview**
 
 Tailored Academic and Resource Assistant, or TARA for short, is an app designed to assist students at the University of Michigan in planning and navigating their academic journeys. Leveraging advanced technologies such as a Large Language Model (LLM) backbone and Retrieval-Augmented Generation (RAG), Tara provides personalized and real-time guidance tailored to each student’s unique career and academic goals. The app serves as a complementary tool to existing counseling services, offering on-demand support with domain expertise and cross-departmental insights.
