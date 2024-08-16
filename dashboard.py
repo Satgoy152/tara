@@ -37,7 +37,6 @@ if "chatBot" not in st.session_state:
 if "degree_audit" not in st.session_state:
     st.session_state.degree_audit = False
 
-
 # Initialize chat history
 if "messages" not in st.session_state:
     st.session_state.messages = []
@@ -56,28 +55,14 @@ for message in st.session_state.messages:
     with st.chat_message(message["role"], avatar=avatar):
         st.empty()
         st.write(message["content"])
-    
-st.button("Hi Tara, what can you do?")
-st.button("What requirements do I have left?")
-st.form()
+
 
 if uploaded_file is None:
     st.session_state.degree_audit = False
 
-# def audit_response_generator(text):
-
-#     # call chat bot
-#     response = st.session_state.chatBot.upload_degree_audit(text)
-
-#     # if line break in response go to next line
-#     for word in response.split(" "):
-#         if word == "":
-#             yield word + " "
-#         else:
-#             yield word + " "
-#             time.sleep(0.06)
-
 def send_user_input(prompt:str):
+    button_holder.empty()
+
     with st.chat_message("user", avatar="🧑‍🎓"):
         st.markdown(prompt)
     
@@ -90,11 +75,28 @@ def send_user_input(prompt:str):
             response = st.write_stream(st.session_state.chatBot.chat_stream(prompt))
 
     st.session_state.messages.append({"role": "assistant", "content": response})
+    
+button_holder = st.empty()
+
+if len(st.session_state.messages) != 0:
+    button_holder.empty()
+else:
+    with button_holder.container():   
+        st.write("Click on a prompt to get started, or start chatting below:")
+        but_a = st.button("Hi Tara, what can you do?")
+        but_b = st.button("Can you tell me what requirements I have left?")
+        but_c = st.button("I'm having trouble planning my courses")
+
+    if but_a:
+        send_user_input("Hi Tara, what can you do?")
+    elif but_b:
+        send_user_input("Can you tell me what requirements I have left?")
+    elif but_c:
+        send_user_input("I'm having trouble planning my courses")
 
 
 if uploaded_file is not None and st.session_state.degree_audit == False:
     audit_text = extract_text_fromaudit(uploaded_file)
-
     with st.chat_message("user", avatar="🧑‍🎓"):
         st.markdown("*You uploaded your degree audit*")
     
