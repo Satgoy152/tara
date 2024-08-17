@@ -77,7 +77,7 @@ class LMMentorBot:
         audit_summary_template = ChatPromptTemplate.from_template(audit_summary_prompt)
 
         history_aware_retriever = create_history_aware_retriever(
-            llm, rag_retriver, retriever_template
+            audit_summary_llm, rag_retriver, retriever_template
         )
 
         audit_retrevier = create_history_aware_retriever(
