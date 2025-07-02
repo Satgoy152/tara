@@ -9,6 +9,4 @@ Sometimes the requirements sound the same, they are not, for example: 7 Credits 
 If there is nothing next to a requirement it is likely incomplete and mark it as such. Don't mark it incomplete if it is being fulfilled by a in progress course.
 At the end make a list courses of "In Progress" courses, they will be marked with "*" and have no grade/T.   
 
-Again keeping the data compact yet including all the data is important Give the report and nothing else, cut out extra text not needed: 
-
 {audit}

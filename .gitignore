@@ -1,6 +1,6 @@
 lm_nodeenv/
 rag_data/*
-external_data/*
+external/*
 .env
 __pycache__/*
 testing_scripts/*

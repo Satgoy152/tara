@@ -7,11 +7,15 @@ import asyncio
 from typing import AsyncGenerator
 
 
+if 'sidebar_state' not in st.session_state:
+    st.session_state.sidebar_state = 'collapsed'
+
 st.set_page_config(
     page_title="Tara", 
     page_icon=":sparkles:", 
+    initial_sidebar_state=st.session_state.sidebar_state,
     layout="centered")
-st.title("✨ Talk to Tara - University of Michigan")
+st.title("✨ Tara")
 
 with st.sidebar:
     st.header("Meet Tara or your Tailored Academic & Resource Assistant!")
