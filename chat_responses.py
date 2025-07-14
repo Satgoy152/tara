@@ -1,7 +1,6 @@
-# __import__('pysqlite3')
+__import__('pysqlite3')
 import sys
-# sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
-# from langchain_openai import ChatOpenAI
+sys.modules['sqlite3'] = sys.modules.pop('pysqlite3')
 from langchain_anthropic import ChatAnthropic
 from langchain_core.prompts import ChatPromptTemplate
 import os
