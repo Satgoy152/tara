@@ -1,0 +1,18 @@
+streamlit
+langchain
+langchain-anthropic
+langchain-chroma
+langchain-community
+langchain-core
+langchain-openai
+langchain-postgres
+langchain-text-splitters
+langchain-voyageai
+langchain-weaviate
+langgraph
+langchainhub
+langsmith
+chromadb
+pydantic-settings
+openai
+# Add other essential packages you actually import

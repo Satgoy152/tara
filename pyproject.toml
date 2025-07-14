@@ -1,0 +1,31 @@
+[project]
+name = "tara"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "langgraph>=0.4.8",
+    "streamlit>=1.45.1",
+    "pysqlite3-binary; sys_platform == 'linux'",
+    "langchain>=0.3.25",
+    "langchain-anthropic>=0.3.15",
+    "langchain-chroma>=0.2.4",
+    "langchain-community>=0.3.25",
+    "langchain-core>=0.3.65",
+    "langchain-openai>=0.3.22",
+    "langchain-postgres>=0.0.13",
+    "langchain-text-splitters>=0.3.8",
+    "langchain-voyageai>=0.1.6",
+    "langchain-weaviate>=0.0.5",
+    "langchainhub>=0.1.21",
+    "langsmith>=0.3.45",
+    "chromadb>=1.0.12",
+    "pydantic-settings>=2.9.1",
+    "openai>=1.86.0",
+    "pypdf>=5.6.0",
+    "google-api-python-client>=2.172.0",
+    "langchain-tavily>=0.2.1",
+    "pdf2markdown4llm>=0.1.9",
+    "langchain-google-genai>=2.1.5",
+]
