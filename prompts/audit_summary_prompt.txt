@@ -4,9 +4,12 @@ Make it into a dense format that minimizes the number of tokens that the next mo
 
 Start with the Name, GPA, Expected Graduation Sem, Credit Towards Program (CTP), and In Progress Units for the current semester. 
 For each requirement you will have the courses/credits needed followed by the courses/credits being currently used for the requirement.
+Requirements will have sub headings that they are grouped under i.e. Area Distribution, include that and associated information of that subheading i.e. 7 credits needed in each category
 For each write the completed and/or ongoing credits/courses out of credits/courses needed to fulfill the requirement with the courses and credits being (even if it is in progress)
 Sometimes the requirements sound the same, they are not, for example: 7 Credits in Humanities and 3 Additional Credits in Humanities are different requirements
 If there is nothing next to a requirement it is likely incomplete and mark it as such. Don't mark it incomplete if it is being fulfilled by a in progress course.
 At the end make a list courses of "In Progress" courses, they will be marked with "*" and have no grade/T.   
+
+Audit:
 
 {audit}

@@ -14,6 +14,10 @@ def extract_text_fromaudit(uploaded_file)->str:
     # Convert PDF to Markdown
     markdown_content = converter.convert(uploaded_file)
 
+    end = markdown_content.find("Course History")
+    if end != -1:
+        markdown_content = markdown_content[:end]
+
     concat_text = markdown_content.replace(" * ", "[IN PROGRESS]")
 
     return concat_text

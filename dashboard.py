@@ -6,6 +6,7 @@ from feedback import append_values
 import asyncio
 from typing import AsyncGenerator
 
+st.logo("um-logo-Sq2QSzDe.png", size = "large")
 
 if 'sidebar_state' not in st.session_state:
     st.session_state.sidebar_state = 'collapsed'
